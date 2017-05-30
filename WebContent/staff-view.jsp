@@ -25,7 +25,7 @@
              <input class="backbutton"  style="float: right"   type="button" value="Back" onclick="window.history.back()">
     </div>
 	<div class="col-md-10 col-md-offset-1">
-	<h3>Staff List</h3>	
+	<h3>Teacher List</h3>	
         <div class="InputDiv" style="text-align: right;" >
             <a href="staff-edit.jsp" >
                 <input type="button" value="Add New" style="width: 20%">
@@ -38,6 +38,7 @@
           <th>Surname</th>
           <th>Access Type</th>
           <th>User Name</th>
+          <th>Course</th>
         </tr>
       </thead>
       <tbody>
@@ -48,8 +49,14 @@
                 <td><%=staff.getSurname()%></td>
                 <td><%=staff.getLuAccessLevel().getAcessDescription()%></td>
                 <td>
-                    <a href="staff?staffId=<%=staff.getStaffId()%>&action=edit">
+                    <a href="staff-edit.jsp?tid=<%=staff.getStaffId()%>&action=edit">
                         <%=staff.getLoginname()%>
+                    </a>
+                </td>
+                
+                 <td style="text-align: center;">
+                    <a href="staff-course-view.jsp?tid=<%=staff.getStaffId()%>">
+                       <img  src="img/courses-icon.png" style="height: 30px">
                     </a>
                 </td>
         </tr> 

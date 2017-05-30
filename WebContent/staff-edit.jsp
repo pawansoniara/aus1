@@ -1,6 +1,9 @@
 <%@page import="com.psedb.util.Tokens"%>
 <%@page import="com.psedb.model.Staff" %>
 <%@page import="com.psedb.model.UserBean" %>
+<%@page import="com.psedb.ejb.StaffEjbBean" %>
+<%@ page import="javax.naming.InitialContext" %>
+<%@ page import="javax.naming.Context" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -38,9 +41,12 @@ UserBean user=(UserBean)request.getSession().getAttribute("user");
 Staff staff=null;
 String admin="";
 String sup="";
-if(request.getSession().getAttribute("staff")!=null){
-   staff=(Staff)request.getSession().getAttribute("staff");
-   request.getSession().setAttribute("staff",null);
+if(request.getParameter("tid")!=null){
+	Context context = new InitialContext();
+	StaffEjbBean staffEjbBean = (StaffEjbBean) context.lookup("java:module/StaffEjbBean");
+	Byte tid = Byte.valueOf(request.getParameter("tid"));
+	staff = staffEjbBean.getStaff(tid);
+	
    if(staff.getLuAccessLevel().getAccessId() == Tokens.ADMINISTRATOR){
        admin="selected";
    }else{
@@ -121,7 +127,7 @@ if(request.getSession().getAttribute("staff")!=null){
 			
                         <tr>
 				<td>
-					<span class="labelClass">User Name</span>
+					<span class="labelClass">Username/Email</span>
 				</td>
 				<td>
                                     <%if(staff!=null){%>
