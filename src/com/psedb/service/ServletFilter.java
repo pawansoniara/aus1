@@ -22,7 +22,11 @@ public class ServletFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
 		HttpServletRequest request = (HttpServletRequest) req;
 	    HttpServletResponse response = (HttpServletResponse) res;
-		if(request.getServletPath().contains("index.jsp") || request.getServletPath().endsWith("login")){
+		if(request.getServletPath().contains("index.jsp") 
+				|| request.getServletPath().endsWith("login")
+				|| request.getServletPath().contains("/css/")
+				|| request.getServletPath().contains("/img/")
+				){
 			chain.doFilter(req, res);
 			return;
 		}else if(request.getSession().getAttribute("user")!=null){
