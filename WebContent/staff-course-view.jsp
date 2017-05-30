@@ -1,3 +1,4 @@
+<%@page import="com.psedb.model.CourseConduction"%>
 <%@page import="com.psedb.model.UserBean" %>
 <%@page import="com.psedb.model.Staff" %>
 <%@page import="com.psedb.ejb.StaffEjbBean" %>
@@ -36,22 +37,22 @@
   <table class="heavytables">
       <thead>
         <tr>
-          <th>Course Id</th>
+          <th>Course Conduction Id</th>
           <th>Course</th>
           <th>Semester</th>
         </tr>
       </thead>
       <tbody>
        
-         <%for(Staff staff:staffEjbBean.getStaffList()){%> 
+         <%for(CourseConduction courseConduction:staffEjbBean.getStaffCourseList(tid)){%> 
           <tr>
-                <td><%=staff.getFname()%></td>
-                <td><%=staff.getSurname()%></td>
                 <td>
-                    <a href="staff-edit.jsp?tid=<%=staff.getStaffId()%>&action=edit">
-                        <%=staff.getLoginname()%>
+                	<a href="staff-course-edit.jsp?ccid=<%=courseConduction.getCcid()%>">
+                        <%=courseConduction.getCcid()%>
                     </a>
                 </td>
+                <td><%=courseConduction.getCourse().getDescription()%></td>
+                <td><%=courseConduction.getSemester()%></td>
                 
                 
         </tr> 

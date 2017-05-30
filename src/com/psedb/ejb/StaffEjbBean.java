@@ -10,13 +10,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
+import com.psedb.model.Course;
+import com.psedb.model.CourseConduction;
 import com.psedb.model.LuAccessLevel;
 import com.psedb.model.Staff;
 import com.psedb.service.BaseJdbcService;
 
 @Stateless
 public class StaffEjbBean extends BaseJdbcService{
+	
+	@Inject
+	CourseEjbBean courseEjbBean;
 
     public void save(Staff staff ) {
         Connection conn=null;
@@ -163,6 +169,112 @@ public class StaffEjbBean extends BaseJdbcService{
         }finally{
              sqlCleanup(null, pstm, conn);
         }
+    }
+
+	public void saveCourse(String tid, String cid, String semester) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        try{
+          conn=getDbConnection();
+          pstm=conn.prepareStatement("	INSERT INTO COURSE_CONDUCTION(TID, CID, SEMESTER)VALUES(?,?,?)");
+          pstm.setByte(1, Byte.valueOf(tid));
+          pstm.setByte(2, Byte.valueOf(cid));
+          pstm.setString(3, semester);
+          pstm.execute();
+        }catch(Exception e){
+            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(null, pstm, conn);
+        }
+    }
+
+	public void updateCourse(String ccid, String tid, String cid, String semester) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        try{
+          conn=getDbConnection();
+          pstm=conn.prepareStatement("UPDATE  COURSE_CONDUCTION SET TID=?,CID=?,SEMESTER=? WHERE CCID="+ccid);
+          pstm.setByte(1, Byte.valueOf(tid));
+          pstm.setByte(2, Byte.valueOf(cid));
+          pstm.setString(3, semester);
+          pstm.execute();
+        }catch(Exception e){
+            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(null, pstm, conn);
+        }
+    }
+
+	public CourseConduction getCourse(Byte ccid) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        ResultSet rs=null;
+        Byte staffId=null;
+        Byte courseId=null;
+        CourseConduction courseConduction=new CourseConduction();
+        try{
+          conn=getDbConnection();
+          String query="SELECT CCID,TID,CID,SEMESTER FROM COURSE_CONDUCTION WHERE CCID=?";
+          pstm=conn.prepareStatement(query);
+          pstm.setByte(1, ccid);
+          rs=pstm.executeQuery();
+          while(rs.next()){
+        	  courseConduction.setCcid(rs.getByte("CCID"));
+        	  courseConduction.setSemester(rs.getString("SEMESTER"));
+        	  staffId=rs.getByte("TID");
+        	  courseId=rs.getByte("CID");
+          }
+        }catch(Exception e){
+            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(rs, pstm, conn);
+        }
+        courseConduction.setStaff(getStaff(staffId));
+        courseConduction.setCourse(courseEjbBean.get(courseId));
+        return courseConduction;
+    }
+
+	public void deleteStaffCourse(Byte ccid) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        try{
+          conn=getDbConnection();
+          pstm=conn.prepareStatement("DELETE FROM COURSE_CONDUCTION WHERE CCID="+ccid);
+          pstm.execute();
+        }catch(Exception e){
+            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(null, pstm, conn);
+        }
+    }
+	
+	public List<CourseConduction> getStaffCourseList(Byte tid) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        ResultSet rs=null;
+        List<CourseConduction> staffCourseList=new ArrayList<>(0);
+        try{
+          conn=getDbConnection();
+          String query=" SELECT C.CID, C.DESCRIPTION,CC.CCID,CC.SEMESTER "
+          			 + "FROM COURSE C "
+          			 + "INNER JOIN COURSE_CONDUCTION CC USING(CID) "
+          			 + "WHERE CC.TID="+tid;
+          pstm=conn.prepareStatement(query);
+          rs=pstm.executeQuery();
+          while(rs.next()){
+        	  CourseConduction courseConduction=new CourseConduction();
+        	  courseConduction.setCcid(rs.getByte("CCID"));
+        	  courseConduction.setSemester(rs.getString("SEMESTER"));
+        	  courseConduction.setCourse(new Course(rs.getByte("CID"), rs.getString("DESCRIPTION")));
+        	  staffCourseList.add(courseConduction);
+          }
+        }catch(Exception e){
+            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(rs, pstm, conn);
+        }
+        
+        return staffCourseList;
     }
     
 }

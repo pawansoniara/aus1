@@ -1,5 +1,8 @@
+<%@page import="com.psedb.ejb.CourseEjbBean"%>
+<%@page import="com.psedb.model.CourseConduction"%>
 <%@page import="com.psedb.util.Tokens"%>
 <%@page import="com.psedb.model.Staff" %>
+<%@page import="com.psedb.model.Course" %>
 <%@page import="com.psedb.model.UserBean" %>
 <%@page import="com.psedb.ejb.StaffEjbBean" %>
 <%@ page import="javax.naming.InitialContext" %>
@@ -37,21 +40,19 @@ xmlhttp.onreadystatechange= function (){
 </script>
 <% 
 UserBean user=(UserBean)request.getSession().getAttribute("user");
+Context context = new InitialContext();
+StaffEjbBean staffEjbBean = (StaffEjbBean) context.lookup("java:module/StaffEjbBean");
+CourseEjbBean courseEjbBean = (CourseEjbBean) context.lookup("java:module/CourseEjbBean");
 
-Staff staff=null;
-String admin="";
-String sup="";
-if(request.getParameter("tid")!=null){
-	Context context = new InitialContext();
-	StaffEjbBean staffEjbBean = (StaffEjbBean) context.lookup("java:module/StaffEjbBean");
+Staff teacher=null;
+CourseConduction courseConduction=null;
+if(request.getParameter("ccid")!=null){
+	Byte ccid = Byte.valueOf(request.getParameter("ccid"));
+	courseConduction=staffEjbBean.getCourse(ccid);
+	teacher=courseConduction.getStaff();
+}else{
 	Byte tid = Byte.valueOf(request.getParameter("tid"));
-	staff = staffEjbBean.getStaff(tid);
-	
-   if(staff.getLuAccessLevel().getAccessId() == Tokens.ADMINISTRATOR){
-       admin="selected";
-   }else{
-      sup="selected"; 
-   }
+	teacher = staffEjbBean.getStaff(tid);
 }
 %>
 
@@ -62,90 +63,64 @@ if(request.getParameter("tid")!=null){
  </div>
 
 <div class="col-md-8 col-md-offset-2">
-<h3>Staff Detail</h3>	
- <%if(staff!=null){%>
+<h3><%=teacher.getFname()+" "+teacher.getSurname() %> : Courses</h3>	
+ <%if(courseConduction!=null){%>
 <div class="InputDiv" style="text-align: right;" >
-            <a href="staff?staffId=<%=staff.getStaffId()%>&action=delete">
+            <a href="staff-course?ccid=<%=courseConduction.getCcid()%>&action=delete">
                 <input type="button" value="Delete" style="width: 20%;background-color: #ff0000 ">
             </a>
 </div>
 <%}%>
-<form action="staff" method="post">
+<form action="staff-course" method="post">
     <div class="InputDiv" style="margin-bottom: 30px;text-align: center">
+           
+            <input type="text" name="tid" value="<%=teacher.getStaffId()%>" readonly="true" style="display: none;"/>
+            
             
 			<table>
 			<tbody>
 			
-                        <%if(staff!=null){%>
+                        <%if(courseConduction!=null){%>
                         <tr>
 				<td>
-					<span class="labelClass">Staff ID</span>
+					<span class="labelClass">Course Conduction Id</span>
 				</td>
 				<td>
-                                    <input type="text" name="staffId" value="<%=staff.getStaffId()%>" readonly="true"/>
+                                    <input type="text" name="ccid" value="<%=courseConduction.getCcid()%>" readonly="true"/>
 				</td>
 			</tr>
                         <%}%>
                         
                         <tr>
 				<td>
-					<span class="labelClass">First Name</span>
+					<span class="labelClass">Course</span>
 				</td>
 				<td>
-                                    <%if(staff!=null){%>
-                                        <input type="text" name="fname" value="<%=staff.getFname()%>"/>
+				
+						<select name="cid" id="flip-1" data-role="slider">
+									<%
+										for (Course course : courseEjbBean.getList()) {
+									%>
+											<option value="<%=course.getCid() %>" <%=(courseConduction!=null && courseConduction.getCourse().getCid().equals(course.getCid()))?"selected":""%>><%=course.getDescription()%></option>
+									<%
+										}
+									%>
+							</select></td>
+					</tr>
+			
+			<tr>
+				<td>
+					<span class="labelClass">Semester</span>
+				</td>
+				<td>
+                                     <%if(courseConduction!=null){%>
+                                       <input type="text" name="semester" value="<%=courseConduction.getSemester()%>"/>
                                     <%}else{%>
-                                        <input type="text" name="fname"/>
+                                       <input type="text" name="semester" />
                                     <%}%>
 				</td>
 			</tr>
 			
-			<tr>
-				<td>
-					<span class="labelClass">Surname</span>
-				</td>
-				<td>
-                                     <%if(staff!=null){%>
-                                       <input type="text" name="surname" value="<%=staff.getSurname()%>"/>
-                                    <%}else{%>
-                                       <input type="text" name="surname" />
-                                    <%}%>
-				</td>
-			</tr>
-			
-			<tr>
-				<td>
-					<span class="labelClass">Access Type</span>
-				</td>
-				<td>
-					<select name="accessId" id="flip-1" data-role="slider">
-                                            <option value="1" <%=admin%>>Administrator</option>
-						<option value="2" <%=sup%>>Supervisor</option>
-					</select> 
-				</td>
-			</tr>
-			
-                        <tr>
-				<td>
-					<span class="labelClass">Username/Email</span>
-				</td>
-				<td>
-                                    <%if(staff!=null){%>
-                                    <input type="text" name="loginname" readonly="true" value="<%=staff.getLoginname()%>"/>
-                                    <%}else{%>
-                                        <input type="text" name="loginname" onblur="loadXMLDoc()"/>
-                                    <%}%>
-				</td>
-			</tr>
-                        
-			<tr>
-				<td>
-					<span class="labelClass">password</span>
-				</td>
-				<td>
-					<input type="password" name="passwd" />
-				</td>
-			</tr>
 			 
 			</tbody>
 			</table>
