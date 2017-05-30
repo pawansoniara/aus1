@@ -57,7 +57,7 @@ if(request.getParameter("studentId")!=null){
    
 }
 %>
-<body>
+<body>	
 
     <div class="col-md-12">
         <span style="float: left"><font style="size: 7px">User : <%=user.getUserName()%></font></span>

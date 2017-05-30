@@ -38,7 +38,7 @@ StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup("java:module/Stu
           <th>First Name</th>
           <th>Surname</th>
           <th>Email</th>
-          <th>Account Lock</th>
+          <th>Course</th>
         </tr>
       </thead>
       <tbody>
@@ -48,7 +48,11 @@ StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup("java:module/Stu
           <td><%=student.getFname()%></td>
           <td><%=student.getSurname()%></td>
           <td><a href="student-edit.jsp?studentId=<%=student.getStudentId()%>&action=edit"><%=student.getStudentEmail()%></a></td>
-          <td><%=student.getAccountLock()%></td>
+          <td style="text-align: center;">
+                    <a href="student-enrollment-view.jsp?sid=<%=student.getStudentId()%>">
+                       <img  src="img/courses-icon.png" style="height: 30px">
+                    </a>
+                </td>
         </tr> 
         <%}%>
       </tbody>
