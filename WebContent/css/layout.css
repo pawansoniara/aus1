@@ -1,0 +1,129 @@
+html, body{
+    font-size: 100%;
+   // background: url(../img/background.jpg) no-repeat 0px -100px;
+    font-family: 'Raleway', sans-serif !important;
+}
+div{
+    
+}
+body a{
+	transition: 0.5s all ease;
+	-webkit-transition: 0.5s all ease;
+	-moz-transition: 0.5s all ease;
+	-o-transition: 0.5s all ease;
+	-ms-transition: 0.5s all ease;
+}
+h1,h2,h3,h4,h5,h6{
+	margin:0 0 18px;			   
+}
+p{
+	margin:0;
+}
+ul,label{
+	margin:0;
+	padding:0;
+}
+body a:hover{
+	text-decoration:none;
+}
+
+.InputDiv input[type="submit"],.InputDiv input[type="reset"],.InputDiv input[type="button"] {
+	border: none;
+	outline: none;
+	color: #fff;
+	background: #2FD828;
+	width: 45%;
+	padding: 15px 31px;
+	font-size: 18px;
+	margin: 10px 2px 0px 6px;
+	-webkit-appearance: none;
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	-o-border-radius:5px;
+	-ms-border-radius:5px;
+}
+
+.anchorButton {
+	border: none;
+	outline: none;
+	color: #fff;
+	background: #2FD828;
+	width: 45%;
+	padding: 18px 76px;
+	font-size: 18px;
+	margin: 10px 2px 0px 6px;
+	-webkit-appearance: none;
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	-o-border-radius:5px;
+	-ms-border-radius:5px;
+}
+
+.InputDiv input[type="text"],.InputDiv input[type="password"] {
+	width: 100%;
+	color: rgba(137, 136, 136, 0.66);
+	outline: none;
+	font-size: 14px;
+	padding: 18px 16px;
+	border: none;
+	margin-bottom: 1em;
+	-webkit-appearance: none;
+	background: none;
+	border: 1px solid rgba(153, 153, 153, 0.35);
+	border-radius: 0.3em;
+	-webkit-border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	-o-border-radius: 0.3em;
+	-ms-border-radius: 0.3em;
+}
+.InputDiv textarea {
+	resize: none;
+	width: 100%;
+	color: rgba(137, 136, 136, 0.66);
+	font-size: 14px;
+	outline: none;
+	padding: 18px 16px;
+	border: none;
+	min-height: 15em;
+	-webkit-appearance: none;
+	background: none;
+	border: 1px solid rgba(153, 153, 153, 0.35);
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	-o-border-radius:5px;
+	-ms-border-radius:5px;
+}
+.InputDiv select {
+    width: 100%;
+    color: rgba(137, 136, 136, 0.66);
+    outline: medium none;
+    font-size: 14px;
+    padding: 18px 16px;
+    margin-bottom: 1em;
+    background: transparent none repeat scroll 0% 0%;
+    border: 1px solid rgba(153, 153, 153, 0.35);
+    border-radius: 0.3em;
+}
+
+.backbutton {
+        border: none;
+	outline: none;
+	color: #fff;
+	background: #cc0000;
+	padding: 15px 31px;
+	font-size: 18px;
+	margin: 10px 2px 0px 6px;
+	-webkit-appearance: none;
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	-o-border-radius:5px;
+	-ms-border-radius:5px;
+}
+
+tr{
+	height: 30px;
+}
