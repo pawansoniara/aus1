@@ -23,7 +23,7 @@ public class StaffEjbBean extends BaseJdbcService{
         PreparedStatement pstm=null;
         try{
           conn=getDbConnection();
-          pstm=conn.prepareStatement("INSERT INTO STAFF(FNAME,SURNAME,ACCESS_ID,LOGINNAME,PASSWD)VALUES(?,?,?,?,?)");
+          pstm=conn.prepareStatement("INSERT INTO teacher(FNAME,SURNAME,ACCESS_ID,email,PASSWD)VALUES(?,?,?,?,?)");
           pstm.setString(1, staff.getFname());
           pstm.setString(2, staff.getSurname());
           pstm.setInt(3, staff.getLuAccessLevel().getAccessId());
@@ -44,15 +44,15 @@ public class StaffEjbBean extends BaseJdbcService{
         List<Staff> staffList=new ArrayList<>(0);
         try{
           conn=getDbConnection();
-          String query="SELECT S.STAFF_ID, S.FNAME, S.SURNAME, S.ACCESS_ID, S.LOGINNAME, S.PASSWD,AL.ACESS_DESCRIPTION "
-                  + "FROM STAFF S "
-                  + "INNER JOIN LU_ACCESS_LEVEL AL ON S.ACCESS_ID=AL.ACCESS_ID "
-                  + "WHERE STAFF_ID<>1";
+          String query="SELECT S.TID, S.FNAME, S.SURNAME, S.ACCESS_ID, S.email, S.PASSWD,AL.ACESS_DESCRIPTION "
+                  + "FROM teacher S "
+                  + "INNER JOIN ACCESS_LEVEL AL ON S.ACCESS_ID=AL.ACCESS_ID "
+                  + "WHERE TID<>1";
           pstm=conn.prepareStatement(query);
           rs=pstm.executeQuery();
           while(rs.next()){
              LuAccessLevel luAccessLevel=new LuAccessLevel(rs.getByte("ACCESS_ID"), rs.getString("ACESS_DESCRIPTION"));
-             Staff staff=new Staff(luAccessLevel, rs.getByte("STAFF_ID"), rs.getString("FNAME"),  rs.getString("SURNAME"),  rs.getString("LOGINNAME"));
+             Staff staff=new Staff(luAccessLevel, rs.getByte("TID"), rs.getString("FNAME"),  rs.getString("SURNAME"),  rs.getString("email"));
              staffList.add(staff);
           }
         }catch(Exception e){
@@ -71,15 +71,15 @@ public class StaffEjbBean extends BaseJdbcService{
         Staff staff=new Staff();
         try{
           conn=getDbConnection();
-          String query="SELECT S.STAFF_ID, S.FNAME, S.SURNAME, S.ACCESS_ID, S.LOGINNAME, S.PASSWD,AL.ACESS_DESCRIPTION "
-                  + "FROM STAFF S "
-                  + "INNER JOIN LU_ACCESS_LEVEL AL ON S.ACCESS_ID=AL.ACCESS_ID "
-                  + "WHERE STAFF_ID="+staffId;
+          String query="SELECT S.TID, S.FNAME, S.SURNAME, S.ACCESS_ID, S.email, S.PASSWD,AL.ACESS_DESCRIPTION "
+                  + "FROM teacher S "
+                  + "INNER JOIN ACCESS_LEVEL AL ON S.ACCESS_ID=AL.ACCESS_ID "
+                  + "WHERE TID="+staffId;
           pstm=conn.prepareStatement(query);
           rs=pstm.executeQuery();
           if(rs.next()){
              LuAccessLevel luAccessLevel=new LuAccessLevel(rs.getByte("ACCESS_ID"), rs.getString("ACESS_DESCRIPTION"));
-             staff=new Staff(luAccessLevel, rs.getByte("STAFF_ID"), rs.getString("FNAME"),  rs.getString("SURNAME"),  rs.getString("LOGINNAME"));
+             staff=new Staff(luAccessLevel, rs.getByte("TID"), rs.getString("FNAME"),  rs.getString("SURNAME"),  rs.getString("email"));
           }
         }catch(Exception e){
             Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
@@ -95,7 +95,7 @@ public class StaffEjbBean extends BaseJdbcService{
         ResultSet rs=null;
         try{
           conn=getDbConnection();
-          String query="SELECT PASSWD FROM STAFF  WHERE STAFF_ID="+staffId;
+          String query="SELECT PASSWD FROM teacher  WHERE TID="+staffId;
           pstm=conn.prepareStatement(query);
           rs=pstm.executeQuery();
           if(rs.next()){
@@ -116,12 +116,12 @@ public class StaffEjbBean extends BaseJdbcService{
         Integer staffId=null;
         try{
           conn=getDbConnection();
-          String query="SELECT STAFF_ID FROM STAFF WHERE LOGINNAME=?";
+          String query="SELECT TID FROM teacher WHERE email=?";
           pstm=conn.prepareStatement(query);
           pstm.setString(1, loginname);
           rs=pstm.executeQuery();
           while(rs.next()){
-             staffId=rs.getInt("STAFF_ID");
+             staffId=rs.getInt("TID");
           }
         }catch(Exception e){
             Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
@@ -137,7 +137,7 @@ public class StaffEjbBean extends BaseJdbcService{
         PreparedStatement pstm=null;
         try{
           conn=getDbConnection();
-          pstm=conn.prepareStatement("UPDATE  STAFF SET FNAME=?,SURNAME=?,ACCESS_ID=?,LOGINNAME=?,PASSWD=? WHERE STAFF_ID="+staffId);
+          pstm=conn.prepareStatement("UPDATE  teacher SET FNAME=?,SURNAME=?,ACCESS_ID=?,email=?,PASSWD=? WHERE TID="+staffId);
           pstm.setString(1, staff.getFname());
           pstm.setString(2, staff.getSurname());
           pstm.setInt(3, staff.getLuAccessLevel().getAccessId());
@@ -156,7 +156,7 @@ public class StaffEjbBean extends BaseJdbcService{
         PreparedStatement pstm=null;
         try{
           conn=getDbConnection();
-          pstm=conn.prepareStatement("DELETE FROM STAFF WHERE STAFF_ID="+staffId);
+          pstm=conn.prepareStatement("DELETE FROM teacher WHERE TID="+staffId);
           pstm.execute();
         }catch(Exception e){
             Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);

@@ -18,7 +18,7 @@ public class AuthenticationEjbBean extends BaseJdbcService{
         PreparedStatement pstm=null;
         try{
           conn=getDbConnection();
-          pstm=conn.prepareStatement("SELECT FNAME, ACCESS_ID  FROM STAFF WHERE LOGINNAME=? AND PASSWD=?");
+          pstm=conn.prepareStatement("SELECT FNAME, ACCESS_ID  FROM teacher WHERE email=? AND PASSWD=?");
           pstm.setString(1, user.getUserName());
           pstm.setString(2, userPassword);
           rs=pstm.executeQuery();
@@ -43,7 +43,7 @@ public class AuthenticationEjbBean extends BaseJdbcService{
         PreparedStatement pstm=null;
         try{
           conn=getDbConnection();
-          pstm=conn.prepareStatement("SELECT FNAME FROM STUDENT WHERE STUDENT_EMAIL=? AND PASSWD=? AND ACCOUNT_LOCK IS FALSE");
+          pstm=conn.prepareStatement("SELECT FNAME FROM STUDENT WHERE EMAIL=? AND PASSWD=?");
           pstm.setString(1, user.getUserName());
           pstm.setString(2, userPassword);
           rs=pstm.executeQuery();
