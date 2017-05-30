@@ -104,23 +104,23 @@ public class StudentEjbBean extends BaseJdbcService {
         ArrayList<Student> studentList=new ArrayList<>(0);
         Student student=null;
         String query="SELECT SID,FNAME, SURNAME,EMAIL  FROM STUDENT";
-        if(staffId!=null && staffId>0){
+        /*if(staffId!=null && staffId>0){
             query="SELECT DISTINCT S.SID,FNAME, S.SURNAME,S.EMAIL  "
                     + "FROM STUDENT S "
                     + "INNER JOIN STUDENT_DEGREE SD ON SD.STUDENT_ID=S.STUDENT_ID "
                     + "INNER JOIN STUDENT_SUPERVISOR SS ON SS.STUDENT_DEGREE_ID=SD.STUDENT_DEGREE_ID WHERE SS.STAFF_ID="+staffId;
-        }
+        }*/
         try{
           conn=getDbConnection();
           pstm=conn.prepareStatement(query);
           rs=pstm.executeQuery();
           while(rs.next()){
               student=new Student();
-              student.setStudentId(rs.getInt("STUDENT_ID"));
+              student.setStudentId(rs.getInt("SID"));
               student.setFname(rs.getString("FNAME"));
               student.setSurname(rs.getString("SURNAME"));
-              student.setStudentEmail(rs.getString("STUDENT_EMAIL"));
-              student.setAccountLock(rs.getBoolean("ACCOUNT_LOCK"));
+              student.setStudentEmail(rs.getString("EMAIL"));
+              //student.setAccountLock(rs.getBoolean("ACCOUNT_LOCK"));
               studentList.add(student);
           }
         }catch(Exception e){
