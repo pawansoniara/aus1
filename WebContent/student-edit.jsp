@@ -54,11 +54,7 @@ if(request.getParameter("studentId")!=null){
    Context context = new InitialContext();
    StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup("java:module/StudentEjbBean");
    student=studentEjbBean.getStudentInfo(studentId);
-   if(student.getAccountLock() == true){
-       on="selected";
-   }else{
-      off="selected"; 
-   }
+   
 }
 %>
 <body>
@@ -125,17 +121,7 @@ if(request.getParameter("studentId")!=null){
 				</td>
 			</tr>
 			
-			<tr>
-				<td>
-					<span class="labelClass">Account Lock</span>
-				</td>
-				<td>
-					<select name="accountLock"  data-role="slider">
-						<option value="false" <%=off%>>Off</option>
-						<option value="true" <%=on%>>On</option>
-					</select> 
-				</td>
-			</tr>
+			
 			
 			
 			</tbody>

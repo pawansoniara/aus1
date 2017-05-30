@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 
+import com.psedb.model.Course;
 import com.psedb.model.LuDegreeType;
 import com.psedb.model.LuThesisStatus;
 import com.psedb.model.Student;
@@ -103,7 +104,9 @@ public class StudentEjbBean extends BaseJdbcService {
         PreparedStatement pstm=null;
         ArrayList<Student> studentList=new ArrayList<>(0);
         Student student=null;
-        String query="SELECT SID,FNAME, SURNAME,EMAIL  FROM STUDENT";
+        Course course=new Course();
+        String query="SELECT s.SID,s.FNAME, s.SURNAME,s.EMAIL,c.title  FROM STUDENT s left join  enrollment e on s.SID=e.SID left"
++" join courses c on e.CID=c.CID;";
         /*if(staffId!=null && staffId>0){
             query="SELECT DISTINCT S.SID,FNAME, S.SURNAME,S.EMAIL  "
                     + "FROM STUDENT S "
@@ -121,6 +124,12 @@ public class StudentEjbBean extends BaseJdbcService {
               student.setSurname(rs.getString("SURNAME"));
               student.setStudentEmail(rs.getString("EMAIL"));
               //student.setAccountLock(rs.getBoolean("ACCOUNT_LOCK"));
+              if(rs.getString("title")!=null){
+            	  course=new Course();
+            	  
+              }
+              
+              
               studentList.add(student);
           }
         }catch(Exception e){
@@ -148,7 +157,7 @@ public class StudentEjbBean extends BaseJdbcService {
               student.setFname(rs.getString("FNAME"));
               student.setSurname(rs.getString("SURNAME"));
               student.setStudentEmail(rs.getString("EMAIL"));
-              student.setAccountLock(rs.getBoolean("ACCOUNT_LOCK"));
+              //student.setAccountLock(rs.getBoolean("ACCOUNT_LOCK"));
               student.setPasswd(rs.getString("PASSWD"));
           }
         }catch(Exception e){
@@ -287,7 +296,7 @@ public class StudentEjbBean extends BaseJdbcService {
         Connection conn=null;
         ResultSet rs=null;
         PreparedStatement pstm=null;
-        String studentQuery="UPDATE STUDENT SET FNAME=?,SURNAME=?,EMAIL=?,PASSWD=?,ACCOUNT_LOCK=? WHERE SID=?";
+        String studentQuery="UPDATE STUDENT SET FNAME=?,SURNAME=?,EMAIL=?,PASSWD=? WHERE SID=?";
         try{
           conn=getDbConnection();
           pstm=conn.prepareStatement(studentQuery);
@@ -295,8 +304,8 @@ public class StudentEjbBean extends BaseJdbcService {
           pstm.setString(2, student.getSurname());
           pstm.setString(3, student.getStudentEmail());
           pstm.setString(4, student.getPasswd());
-          pstm.setBoolean(5, student.getAccountLock());
-          pstm.setInt(6, studentId);
+          //pstm.setBoolean(5, student.getAccountLock());
+          pstm.setInt(5, studentId);
           pstm.execute();
         }catch(Exception e){
             System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
