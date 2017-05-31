@@ -18,6 +18,7 @@ import com.psedb.model.CourseConduction;
 import com.psedb.model.Enrollment;
 import com.psedb.model.LuDegreeType;
 import com.psedb.model.LuThesisStatus;
+import com.psedb.model.Staff;
 import com.psedb.model.Student;
 import com.psedb.model.StudentComment;
 import com.psedb.model.StudentDegree;
@@ -479,9 +480,12 @@ public class StudentEjbBean extends BaseJdbcService {
         PreparedStatement pstm=null;
         ResultSet rs=null;
         List<Enrollment> studentCourseList=new ArrayList<>(0);
+        Staff staff;
         try{
           conn=getDbConnection();
-          String query="select e.eid,e.CID, description,semester from course c, enrollment e where e.CID=c.CID and e.SID=?";
+          String query="select e.eid,e.CID, description,cc.semester,t.fname as name,t.email from course c, enrollment e,"
+          		+ "course_conduction cc,teacher t where e.CID=c.CID and c.CID=cc.CID and cc.TID = t.TID and "
+          		+ "e.semester=cc.semester and e.SID=?";
           pstm=conn.prepareStatement(query);
           pstm.setInt(1, studentId);
           rs=pstm.executeQuery();
@@ -491,6 +495,10 @@ public class StudentEjbBean extends BaseJdbcService {
         	  enrollment.setSemester(rs.getString("SEMESTER"));
         	  enrollment.setCourse(new Course(rs.getByte("CID"), rs.getString("DESCRIPTION")));
         	  enrollment.setAssessment(getAssesment(rs.getInt("eid")));
+        	  staff=new Staff();
+        	  staff.setLoginname(rs.getString("email"));
+        	  staff.setFname(rs.getString("name"));
+        	  enrollment.setStaff(staff);
         	  studentCourseList.add(enrollment);
           }
         }catch(Exception e){

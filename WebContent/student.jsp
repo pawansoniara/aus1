@@ -64,6 +64,8 @@ Student student=studentEjbBean.getStudentInfo(Integer.valueOf(user.getId()));
                         <th>Course</th>
                         <th>Semester</th>
                         <th>Assessment</th>
+                        <th>Teacher Name</th>
+                        <th>Email</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,6 +85,8 @@ Student student=studentEjbBean.getStudentInfo(Integer.valueOf(user.getId()));
                         	
                         	<%} %>
                         </td>
+                         <td><%=enrollment.getStaff().getFname()%></td>
+                        <td><%=enrollment.getStaff().getLoginname()%></td>
                     </tr>
                    <%}%>
                 </tbody>

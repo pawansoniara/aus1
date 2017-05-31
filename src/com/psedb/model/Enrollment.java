@@ -8,6 +8,14 @@ public class Enrollment implements java.io.Serializable{
 	private Student student;
 	private Course course;
 	private Assessment assessment;
+	private Staff staff;
+	
+	public Staff getStaff() {
+		return staff;
+	}
+	public void setStaff(Staff staff) {
+		this.staff = staff;
+	}
 	public Integer getEid() {
 		return eid;
 	}
