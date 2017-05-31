@@ -1,3 +1,5 @@
+<%@page import="com.psedb.model.CourseConduction"%>
+<%@page import="com.psedb.ejb.StaffEjbBean"%>
 <%@page import="com.psedb.model.UserBean" %>
 <%@page import="com.psedb.model.Student" %>
 <%@page import="com.psedb.ejb.StudentEjbBean" %>
@@ -17,37 +19,45 @@
 </head>
 <% UserBean user=(UserBean)request.getSession().getAttribute("user"); 
 Context context = new InitialContext();
-StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup(StudentEjbBean.class.getName());
-Byte staffId=0;
-if(request.getSession().getAttribute("staffId")!=null){
-    staffId=(Byte)request.getSession().getAttribute("staffId");
-}
+StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup("java:module/StudentEjbBean");
+StaffEjbBean staffEjbBean = (StaffEjbBean) context.lookup("java:module/StaffEjbBean"); 
+CourseConduction courseConduction=staffEjbBean.getCourse(Byte.valueOf(request.getParameter("ccid")));
 %>
 <body>		
-    <div class="col-md-12">
+   <div class="col-md-12">
         <span style="float: left"><font style="size: 7px">User : <%=user.getUserName()%></font></span>
-            <a   href="index.jsp" style="float: right" >
-                    <input class="backbutton" type="button" value="(!)">
-             </a>
+           <input class="backbutton"  style="float: right"   type="button" value="Back" onclick="window.history.back()">
     </div>
 	<div class="col-md-10 col-md-offset-1">
-	<h3>Students</h3>	
+	
+	<h3>Enrolled Students</h3>
+	<h4>Course   :<%=courseConduction.getCourse().getDescription()  %> </h4>
+	<h4>Semester  :<%=courseConduction.getSemester()  %> </h4>
+		
+        <div class="InputDiv" style="text-align: right;" >
+            
+        </div>
   <table class="heavytables">
       <thead>
         <tr>
           <th>First Name</th>
           <th>Surname</th>
           <th>Email</th>
-          <th>Account Lock</th>
+          <th>Assessment</th>
         </tr>
       </thead>
       <tbody>
-          <%for(Student student:studentEjbBean.getStudentList(staffId)){%>
+          <%for(Student student:studentEjbBean.getEnrollStudentList(courseConduction)){%>
         <tr>
             
           <td><%=student.getFname()%></td>
           <td><%=student.getSurname()%></td>
-          <td><a href="student.jsp?studentId=<%=student.getStudentId()%>&staffId=<%=staffId%>"><%=student.getStudentEmail()%></a></td>
+          <td><%=student.getStudentEmail()%></td>
+          <td style="text-align: center;">
+                    <a href="assessment.jsp?eid=<%=student.getEid()%>&ccid=<%=courseConduction.getCcid()%>">
+                       <img  src="img/courses-icon.png" style="height: 30px">
+                    </a>
+                </td>
         </tr> 
         <%}%>
       </tbody>

@@ -7,6 +7,7 @@ public class Enrollment implements java.io.Serializable{
 	private String semester;
 	private Student student;
 	private Course course;
+	private Assessment assessment;
 	public Integer getEid() {
 		return eid;
 	}
@@ -30,6 +31,12 @@ public class Enrollment implements java.io.Serializable{
 	}
 	public void setCourse(Course course) {
 		this.course = course;
+	}
+	public Assessment getAssessment() {
+		return assessment;
+	}
+	public void setAssessment(Assessment assessment) {
+		this.assessment = assessment;
 	} 
 	
 	

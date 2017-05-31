@@ -15,27 +15,29 @@
         <div class="col-md-12">
             <span style="float: left"><font style="size: 7px">User : <%=user.getUserName()%></font></span>
             <a  href="index.jsp" style="float: right" >
-                    <input  class="backbutton"  type="button" value="(!)">
+                    <input  class="backbutton"  type="button" value="Logout">
              </a>
         </div>
         <div class="col-md-4 col-md-offset-4">
             <div class="InputDiv" style="margin-top: 100px">
                 <a href="staff-view.jsp">
-                    <input type="button" value="Staff Section" />
+                    <input type="button" value="Staff Section"  style="width: 100%"/>
                 </a>
+            </div>
+        </div>
+        
+        <div class="col-md-4 col-md-offset-4">
+            <div class="InputDiv" >
                  <a href="student-view.jsp">
-                    <input type="button" value="Student Section" >
+                    <input type="button" value="Student Section"  style="width: 100%" >
                  </a>
             </div>
         </div>
         
         <div class="col-md-4 col-md-offset-4">
             <div class="InputDiv" >
-               <a href="student-degree-view.jsp">
-                    <input type="button"   value="Manage Enrollment" >
-                </a>
                  <a href="courses-view.jsp">
-                    <input type="button" value="Manage Courses" >
+                    <input type="button" value="Manage Courses"  style="width: 100%">
                  </a>
             </div>
         </div>

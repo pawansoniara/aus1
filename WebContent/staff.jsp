@@ -1,6 +1,7 @@
+<%@page import="com.psedb.ejb.StaffEjbBean"%>
+<%@page import="com.psedb.model.CourseConduction"%>
 <%@page import="com.psedb.model.UserBean" %>
 <%@page import="com.psedb.model.Student" %>
-<%@page import="com.psedb.ejb.StudentEjbBean" %>
 <%@ page import="javax.naming.InitialContext" %>
 <%@ page import="javax.naming.Context" %>
 
@@ -17,11 +18,9 @@
 </head>
 <% UserBean user=(UserBean)request.getSession().getAttribute("user"); 
 Context context = new InitialContext();
-StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup("java:module/StudentEjbBean");
-Integer staffId=0;
-if(request.getSession().getAttribute("staffId")!=null){
-    staffId=(Integer)request.getSession().getAttribute("staffId");
-}
+StaffEjbBean staffEjbBean = (StaffEjbBean) context.lookup("java:module/StaffEjbBean"); 
+Byte staffId=user.getId();
+
 %>
 <body>		
     <div class="col-md-12">
@@ -31,29 +30,34 @@ if(request.getSession().getAttribute("staffId")!=null){
              </a>
     </div>
 	<div class="col-md-10 col-md-offset-1">
-	<h3>Students</h3>	
-  <table class="heavytables">
-      <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Surname</th>
-          <th>Email</th>
-          <th>Account Lock</th>
-        </tr>
-      </thead>
-      <tbody>
-          <%for(Student student:studentEjbBean.getStudentList(staffId)){%>
-        <tr>
-            
-          <td><%=student.getFname()%></td>
-          <td><%=student.getSurname()%></td>
-          <td><a href="student.jsp?studentId=<%=student.getStudentId()%>&staffId=<%=staffId%>"><%=student.getStudentEmail()%></a></td>
-          <td><%=student.getAccountLock()%></td>
-        </tr> 
-        <%}%>
-      </tbody>
-    </table>
-	</div>
+	<h3>Course Conduction</h3>	
+		  <table class="heavytables">
+		      <thead>
+		        <tr>
+		          <th>Course Conduction Id</th>
+		          <th>Course</th>
+		          <th>Semester</th>
+		        </tr>
+		      </thead>
+		      <tbody>
+		       
+		         <%for(CourseConduction courseConduction:staffEjbBean.getStaffCourseList(staffId)){%> 
+		          <tr>
+		                <td>
+		                        <%=courseConduction.getCcid()%>
+		                </td>
+		                <td><%=courseConduction.getCourse().getDescription()%></td>
+		                <td>
+		                	<a href="staff-student-view.jsp?ccid=<%=courseConduction.getCcid()%>">
+		                       <%=courseConduction.getSemester()%>
+		                    </a>
+		                	
+		                
+		                </td>
+		        </tr> 
+			<%}%>	
+		      </tbody>
+		    </table>
 	</div>
 <div class="clearfix"></div>				
 </body>

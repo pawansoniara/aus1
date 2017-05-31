@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import com.psedb.model.Assessment;
 import com.psedb.model.Course;
 import com.psedb.model.CourseConduction;
 import com.psedb.model.Enrollment;
@@ -32,6 +33,11 @@ public class StudentEjbBean extends BaseJdbcService {
     
 	@Inject
 	CourseEjbBean courseEjbBean;
+	
+	@Inject
+	StaffEjbBean staffEjbBean;
+	
+	
     public ArrayList<LuDegreeType> getDegreeTypes(){
         Connection conn=null;
         ResultSet rs=null;
@@ -49,7 +55,7 @@ public class StudentEjbBean extends BaseJdbcService {
               degreeTypes.add(degreeType);
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -74,7 +80,7 @@ public class StudentEjbBean extends BaseJdbcService {
           pstm.execute();
           pstm.close();
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -96,7 +102,7 @@ public class StudentEjbBean extends BaseJdbcService {
              studentId=rs.getInt("SID");
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -104,15 +110,15 @@ public class StudentEjbBean extends BaseJdbcService {
         return studentId;
     }
     
-    public ArrayList<Student> getStudentList(Integer staffId){
+    public ArrayList<Student> getStudentList(Byte staffId){
         Connection conn=null;
         ResultSet rs=null;
         PreparedStatement pstm=null;
         ArrayList<Student> studentList=new ArrayList<>(0);
         Student student=null;
-        Course course=new Course();
-        String query="SELECT s.SID,s.FNAME, s.SURNAME,s.EMAIL,c.title  FROM STUDENT s left join  enrollment e on s.SID=e.SID left"
-+" join courses c on e.CID=c.CID;";
+       // Course course=new Course();
+        String query="SELECT s.SID,s.FNAME, s.SURNAME,s.EMAIL  FROM STUDENT s left join  enrollment e on s.SID=e.SID left"
++" join course c on e.CID=c.CID;";
         /*if(staffId!=null && staffId>0){
             query="SELECT DISTINCT S.SID,FNAME, S.SURNAME,S.EMAIL  "
                     + "FROM STUDENT S "
@@ -130,16 +136,47 @@ public class StudentEjbBean extends BaseJdbcService {
               student.setSurname(rs.getString("SURNAME"));
               student.setStudentEmail(rs.getString("EMAIL"));
               //student.setAccountLock(rs.getBoolean("ACCOUNT_LOCK"));
-              if(rs.getString("title")!=null){
+            /*  if(rs.getString("title")!=null){
             	  course=new Course();
             	  
-              }
+              }*/
               
               
               studentList.add(student);
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
+        }finally{
+             sqlCleanup(rs, pstm, conn);
+        }
+        
+        return studentList;
+    }
+    
+    public ArrayList<Student> getEnrollStudentList(CourseConduction courseConduction){
+        Connection conn=null;
+        ResultSet rs=null;
+        PreparedStatement pstm=null;
+        ArrayList<Student> studentList=new ArrayList<>(0);
+        Student student=null;
+        String query="SELECT S.*,E.EID FROM STUDENT S "
+        		   + "INNER JOIN ENROLLMENT E USING(SID) "
+        		   + "WHERE E.CID="+courseConduction.getCourse().getCid()+" AND SEMESTER='"+courseConduction.getSemester()+"'";
+        try{
+          conn=getDbConnection();
+          pstm=conn.prepareStatement(query);
+          rs=pstm.executeQuery();
+          while(rs.next()){
+              student=new Student();
+              student.setStudentId(rs.getInt("SID"));
+              student.setFname(rs.getString("FNAME"));
+              student.setSurname(rs.getString("SURNAME"));
+              student.setStudentEmail(rs.getString("EMAIL"));
+              student.setEid(rs.getInt("EID"));
+              studentList.add(student);
+          }
+        }catch(Exception e){
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -167,7 +204,7 @@ public class StudentEjbBean extends BaseJdbcService {
               student.setPasswd(rs.getString("PASSWD"));
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -219,84 +256,12 @@ public class StudentEjbBean extends BaseJdbcService {
           pstm.setString(3, comment);
           pstm.execute();
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
     }
     
-    public ArrayList<StudentDegree> getStudentDegreeList(Integer studentId,Integer staffId){
-        StudentDegree studentDegree;
-        Student student;
-            Connection conn=null;
-        ResultSet rs=null;
-        PreparedStatement pstm=null;
-        ArrayList<StudentDegree> studentDegreeList=new ArrayList<StudentDegree>();
-        LuDegreeType luDegreeType;
-        LuThesisStatus status;
-        StudentComment studentComment;
-        Set<StudentComment> comments;
-        String query="SELECT DISTINCT SD.STUDENT_ID,FNAME,SURNAME,STUDENT_EMAIL,ACCOUNT_LOCK,PASSWD,DATE_ENROLLED,DATE_COMPLETED,"
-                    + "SCHOLARSHIP,DATE_THESIS_INTEND_SUBMIT,DATE_THESIS_SUBMIT,THESIS_TITLE,LDT.DEGREE_TYPE_ID,"
-                    + "DATE_CONFIRMATION_INTENDED,DATE_CONFIRMATION_COMPLETED,SD.THESIS_STATUS_ID,LDT.DTNAME,LTS.STATUS,"
-                    + "SC.CDATE,SC.ACOMMENT,SD.STUDENT_DEGREE_ID  "
-                    + "FROM STUDENT_DEGREE SD "
-                    + "INNER JOIN STUDENT S ON  SD.STUDENT_ID=S.STUDENT_ID "
-                    + "INNER JOIN LU_DEGREE_TYPE LDT ON LDT.DEGREE_TYPE_ID=SD.DEGREE_TYPE_ID "
-                    + "INNER JOIN LU_THESIS_STATUS LTS ON SD.THESIS_STATUS_ID=LTS.THESIS_STATUS_ID "
-                    + "LEFT JOIN STUDENT_COMMENT SC ON SD.STUDENT_DEGREE_ID=SC.STUDENT_DEGREE_ID "
-                    + "INNER JOIN STUDENT_SUPERVISOR SS ON SS.STUDENT_DEGREE_ID=SD.STUDENT_DEGREE_ID ";
-        if(studentId!=null && studentId>0){
-           query+= " WHERE  SD.STUDENT_ID="+studentId;
-        }
-        
-        if(staffId!=null && staffId>0){
-           query+= " AND SS.STAFF_ID="+staffId;
-        }
-        try{
-          conn=getDbConnection();
-          pstm=conn.prepareStatement(query);
-          rs=pstm.executeQuery();
-          while(rs.next()){
-              luDegreeType=new LuDegreeType();
-              status=new LuThesisStatus();
-              student=new Student();
-              student.setFname(rs.getString("fname"));
-              student.setSurname(rs.getString("surname"));
-              student.setStudentEmail(rs.getString("student_email"));
-              student.setAccountLock(rs.getBoolean("account_lock"));
-              luDegreeType.setDtname(rs.getString("dtname"));
-              
-              studentDegree=new StudentDegree();
-              studentDegree.setStudent(student);
-              studentDegree.setStudentDegreeId(rs.getInt("student_degree_id"));
-              studentDegree.setDateCompleted(rs.getDate("date_completed"));
-              studentDegree.setDateConfirmationCompleted(rs.getDate("date_confirmation_completed"));
-              studentDegree.setDateConfirmationIntended(rs.getDate("date_confirmation_intended"));
-              studentDegree.setDateEnrolled(rs.getDate("date_enrolled"));
-              studentDegree.setDateThesisIntendSubmit(rs.getDate("date_thesis_intend_submit"));
-              studentDegree.setDateThesisSubmit(rs.getDate("date_thesis_submit"));
-              studentDegree.setScholarship(rs.getString("scholarship"));
-              studentDegree.setThesisTitle(rs.getString("thesis_title"));
-              studentDegree.setLuDegreeType(luDegreeType);
-              status.setStatus(rs.getString("status"));
-              studentDegree.setLuThesisStatus(status);
-              studentComment=new StudentComment();
-              studentComment.setAcomment(rs.getString("acomment"));
-              studentComment.setCdate(rs.getDate("cdate"));
-              comments=new HashSet<StudentComment>();
-              comments.add(studentComment);
-              studentDegree.setStudentComments(comments);
-              studentDegreeList.add(studentDegree);
-          }
-        }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
-        }finally{
-             sqlCleanup(rs, pstm, conn);
-        }
-        
-        return studentDegreeList;
-    }
 
     public void updateStudent(Student student, Integer studentId) {
         Connection conn=null;
@@ -314,7 +279,7 @@ public class StudentEjbBean extends BaseJdbcService {
           pstm.setInt(5, studentId);
           pstm.execute();
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -335,7 +300,7 @@ public class StudentEjbBean extends BaseJdbcService {
               return rs.getInt("staff_id");
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -403,7 +368,7 @@ public class StudentEjbBean extends BaseJdbcService {
               studentDegree.setStaffId(rs.getByte("staff_id"));
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -474,7 +439,7 @@ public class StudentEjbBean extends BaseJdbcService {
             pstm.execute();
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -500,7 +465,7 @@ public class StudentEjbBean extends BaseJdbcService {
              studentCourseList.add(course);
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -525,10 +490,11 @@ public class StudentEjbBean extends BaseJdbcService {
         	  enrollment.setEid(rs.getInt("eid"));
         	  enrollment.setSemester(rs.getString("SEMESTER"));
         	  enrollment.setCourse(new Course(rs.getByte("CID"), rs.getString("DESCRIPTION")));
+        	  enrollment.setAssessment(getAssesment(rs.getInt("eid")));
         	  studentCourseList.add(enrollment);
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -545,7 +511,7 @@ public class StudentEjbBean extends BaseJdbcService {
         Enrollment enrollment=new Enrollment();
         try{
           conn=getDbConnection();
-          String query="SELECT eid,sid,CID,SEMESTER FROM enrollment WHERE eid=?";
+          String query="SELECT EID,SID,CID,SEMESTER FROM ENROLLMENT WHERE EID=?";
           pstm=conn.prepareStatement(query);
           pstm.setByte(1, eid);
           rs=pstm.executeQuery();
@@ -556,7 +522,7 @@ public class StudentEjbBean extends BaseJdbcService {
         	  courseId=rs.getByte("CID");
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -576,7 +542,7 @@ public class StudentEjbBean extends BaseJdbcService {
           pstm.setString(3, semester);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -593,7 +559,7 @@ public class StudentEjbBean extends BaseJdbcService {
           pstm.setString(3, semester);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -607,7 +573,73 @@ public class StudentEjbBean extends BaseJdbcService {
           pstm=conn.prepareStatement("DELETE FROM enrollment WHERE eid="+eid);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(null, pstm, conn);
+        }
+    }
+
+	public void saveAssessment(String eid, String a1, String a2, String sid) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        try{
+          conn=getDbConnection();
+          pstm=conn.prepareStatement("INSERT INTO ASSESSMENT(SID, EID, A1, A2)VALUES(?,?,?,?)");
+          pstm.setInt(1, Integer.valueOf(sid));
+          pstm.setInt(2, Integer.valueOf(eid));
+          pstm.setInt(3, Integer.valueOf(a1));
+          pstm.setInt(4, Integer.valueOf(a2));
+          pstm.execute();
+        }catch(Exception e){
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(null, pstm, conn);
+        }
+    }
+
+	public Assessment getAssesment(Integer eid) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        ResultSet rs=null;
+        Integer studentId=null;
+        Byte enrollmentId=null;
+        Assessment assessment=new Assessment();
+        try{
+          conn=getDbConnection();
+          String query="SELECT AID, SID, EID, A1, A2 FROM ASSESSMENT WHERE EID=?";
+          pstm=conn.prepareStatement(query);
+          pstm.setInt(1, eid);
+          rs=pstm.executeQuery();
+          if(rs.next()){
+        	  assessment.setAid(rs.getInt("AID"));
+        	  assessment.setA1(rs.getInt("A1"));
+        	  assessment.setA2(rs.getInt("A2"));
+        	  studentId=rs.getInt("SID");
+        	  enrollmentId=rs.getByte("EID");
+          }else{
+        	  return null;
+          }
+        }catch(Exception e){
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+        }finally{
+             sqlCleanup(rs, pstm, conn);
+        }
+        assessment.setStudent(getStudentInfo(studentId));
+        assessment.setEnrollment(getCourse(enrollmentId));
+        return assessment;
+    }
+
+	public void updateAssessment(String aid, String a1, String a2) {
+        Connection conn=null;
+        PreparedStatement pstm=null;
+        try{
+          conn=getDbConnection();
+          pstm=conn.prepareStatement("UPDATE  ASSESSMENT SET A1=?,A2=? WHERE AID="+aid);
+          pstm.setInt(1, Integer.valueOf(a1));
+          pstm.setInt(2, Integer.valueOf(a2));
+          pstm.execute();
+        }catch(Exception e){
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }

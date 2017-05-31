@@ -22,7 +22,7 @@ private final String PASSWORD="test";
             Class.forName(Driver.class.getName());
             conn = DriverManager.getConnection("jdbc:mysql://"+HOST+":3306/"+DATABASE, USERNAME, PASSWORD);
         } catch (Exception ex) {
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
         return conn;
     }
@@ -32,7 +32,7 @@ private final String PASSWORD="test";
             try {
                 rs.close();
             } catch (SQLException ex) {
-                Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -40,7 +40,7 @@ private final String PASSWORD="test";
             try {
                 pstm.close();
             } catch (SQLException ex) {
-                Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -48,7 +48,7 @@ private final String PASSWORD="test";
             try {
                 conn.close();
             } catch (SQLException ex) {
-                Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

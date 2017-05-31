@@ -26,7 +26,7 @@ public class CourseEjbBean extends BaseJdbcService{
           pstm.setString(1, course.getDescription());
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -46,7 +46,7 @@ public class CourseEjbBean extends BaseJdbcService{
              courses.add(new Course(rs.getByte("CID"),rs.getString("DESCRIPTION")));
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -69,7 +69,7 @@ public class CourseEjbBean extends BaseJdbcService{
         	  course= new Course(rs.getByte("CID"),rs.getString("DESCRIPTION"));
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -88,7 +88,7 @@ public class CourseEjbBean extends BaseJdbcService{
           pstm.setByte(2, course.getCid());
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -102,7 +102,7 @@ public class CourseEjbBean extends BaseJdbcService{
           pstm=conn.prepareStatement("DELETE FROM COURSE WHERE CID="+cid);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -122,7 +122,7 @@ public class CourseEjbBean extends BaseJdbcService{
         	 return rs.getByte("CID");
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }

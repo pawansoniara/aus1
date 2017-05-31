@@ -30,8 +30,7 @@ public class StudentController extends HttpServlet {
 			String surname = req.getParameter("surname");
 			String studentEmail = req.getParameter("studentEmail");
 			String passwd = req.getParameter("passwd");
-			Boolean accountLock = Boolean.valueOf(req.getParameter("accountLock"));
-			Student student = new Student(fname, surname, studentEmail, passwd, accountLock, null);
+			Student student = new Student(fname, surname, studentEmail, passwd);
 			if (req.getParameter("studentId") == null && studentBean.getStudentId(studentEmail) == null) {
 				studentBean.saveStudent(student);
 			} else if (req.getParameter("studentId") != null) {

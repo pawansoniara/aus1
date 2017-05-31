@@ -84,7 +84,7 @@ if(request.getParameter("studentDegreeId")!=null){
                                 <td style="text-align: center">
 					<%if(degree==null){%>
                                             <select name="studentId"  data-role="slider">
-                                                <% for(Student student:studentEjbBean.getStudentList(0)){%>
+                                                <% for(Student student:studentEjbBean.getStudentList(null)){%>
                                                     <option value="<%=student.getStudentId()%>"  ><%=student.getFname()%> <%=student.getSurname()%></option>
                                                 <%}%>
                                             </select> 

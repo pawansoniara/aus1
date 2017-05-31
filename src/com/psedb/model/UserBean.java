@@ -10,6 +10,7 @@ public class UserBean {
    private String userName;
    private Integer accessId;
    private String loginName;
+   private Byte id;
 
     public String getLoginName() {
         return loginName;
@@ -47,6 +48,14 @@ public class UserBean {
     public String toString() {
         return userType +" : "+userName+" : "+accessId; //To change body of generated methods, choose Tools | Templates.
     }
+
+	public Byte getId() {
+		return id;
+	}
+
+	public void setId(Byte id) {
+		this.id = id;
+	}
     
     
 }

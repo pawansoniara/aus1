@@ -42,7 +42,7 @@ StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup("java:module/Stu
         </tr>
       </thead>
       <tbody>
-          <%for(Student student:studentEjbBean.getStudentList(0)){%>
+          <%for(Student student:studentEjbBean.getStudentList(null)){%>
         <tr>
             
           <td><%=student.getFname()%></td>

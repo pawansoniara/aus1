@@ -1,3 +1,4 @@
+<%@page import="com.psedb.model.Enrollment"%>
 <%@page import="com.psedb.model.StudentComment"%>
 <%@page import="com.psedb.model.StudentDegree"%>
 <%@page import="com.psedb.model.UserBean"%>
@@ -22,19 +23,9 @@
 <%
 
 UserBean user=(UserBean)request.getSession().getAttribute("user"); 
-Student student=null;
 Context context = new InitialContext();
 StudentEjbBean studentEjbBean = (StudentEjbBean) context.lookup("java:module/StudentEjbBean");
-Integer studentId=0;
-Integer staffId=0;
-if(request.getSession().getAttribute("studentId")!=null){
-   studentId=(Integer)request.getSession().getAttribute("studentId");
-   student=studentEjbBean.getStudentInfo(studentId);
-}else if(request.getParameter("studentId")!=null && request.getParameter("staffId")!=null){
-   studentId=Integer.valueOf(request.getParameter("studentId"));
-   staffId=Integer.valueOf(request.getParameter("staffId"));
-   student=studentEjbBean.getStudentInfo(studentId);
-}
+Student student=studentEjbBean.getStudentInfo(Integer.valueOf(user.getId()));
 %>
 <body>
     <div class="col-md-12">
@@ -42,7 +33,7 @@ if(request.getSession().getAttribute("studentId")!=null){
             
                 <%if(request.getParameter("staffId")==null){%>
                     <a  href="index.jsp" style="float: right" >
-                        <input class="backbutton"  type="button" value="(!)">
+                        <input class="backbutton"  type="button" value="Logout">
                     </a>
                 <%}else{%>
                      <input class="backbutton"  style="float: right"   type="button" value="Back" onclick="window.history.back()">
@@ -69,25 +60,29 @@ if(request.getSession().getAttribute("studentId")!=null){
             <table class="heavytables">
                 <thead>
                     <tr>
-                        <th>Degree</th>
-                        <th>Enrol Date</th>
-                        <th>Date Completed</th>
-                        <th>Scholarship</th>
-                        <th>Thesis Title</th>
-                        <th>Date Thesis Submit</th>
-                        <th>Thesis Status</th>
+                        <th>EID</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Assessment</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <%for(StudentDegree degree:studentEjbBean.getStudentDegreeList(studentId,staffId)){%>
+                    <%for(Enrollment enrollment:studentEjbBean.getStudentCourseList(student.getStudentId())){%>
                     <tr>
-                        <td><%=degree.getLuDegreeType().getDtname()%></td>
-                        <td><%=degree.getDateEnrolled()%></td>
-                        <td><%=degree.getDateCompleted()%></td>
-                        <td><%=degree.getScholarship()%></td>
-                        <td><%=degree.getThesisTitle()%></td>
-                        <td><%=degree.getDateThesisSubmit()%></td>
-                        <td><%=degree.getLuThesisStatus().getStatus()%></td>
+                        <td><%=enrollment.getEid()%></td>
+                        <td><%=enrollment.getCourse().getDescription()%></td>
+                        <td><%=enrollment.getSemester()%></td>
+                        <td >
+                        	<%if(enrollment.getAssessment()!=null){ %>
+                        		<div style="width: 100%;text-align: center;">
+                        			A1: <%=enrollment.getAssessment().getA1() %>
+                        			<br>
+                        			A2: <%=enrollment.getAssessment().getA2() %>
+                        		
+                        		</div>
+                        	
+                        	<%} %>
+                        </td>
                     </tr>
                    <%}%>
                 </tbody>

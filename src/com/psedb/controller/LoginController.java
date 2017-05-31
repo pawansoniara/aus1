@@ -50,12 +50,8 @@ public class LoginController extends HttpServlet {
 		} else if (userType.equalsIgnoreCase("staff") && user.getAccessId() == Tokens.ADMINISTRATOR.intValue()) {
 			resp.sendRedirect("admin.jsp");
 		} else if (userType.equalsIgnoreCase("staff") && user.getAccessId() == Tokens.SUPERVISOR.intValue()) {
-			staffId = (new StaffEjbBean()).getStaffId(req.getParameter("userName"));
-			session.setAttribute("staffId", staffId);
 			resp.sendRedirect("staff.jsp");
 		} else if (userType.equalsIgnoreCase("student")) {
-			studentId = (new StudentEjbBean()).getStudentId(req.getParameter("userName"));
-			session.setAttribute("studentId", studentId);
 			resp.sendRedirect("student.jsp");
 		} else {
 			session.setAttribute("errorMessage", "Invalid Username/Password");

@@ -37,7 +37,7 @@ public class StaffEjbBean extends BaseJdbcService{
           pstm.setString(5, staff.getPasswd());
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -62,7 +62,7 @@ public class StaffEjbBean extends BaseJdbcService{
              staffList.add(staff);
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -88,7 +88,7 @@ public class StaffEjbBean extends BaseJdbcService{
              staff=new Staff(luAccessLevel, rs.getByte("TID"), rs.getString("FNAME"),  rs.getString("SURNAME"),  rs.getString("email"));
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -108,7 +108,7 @@ public class StaffEjbBean extends BaseJdbcService{
               return rs.getString("PASSWD");
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -130,7 +130,7 @@ public class StaffEjbBean extends BaseJdbcService{
              staffId=rs.getInt("TID");
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -151,7 +151,7 @@ public class StaffEjbBean extends BaseJdbcService{
           pstm.setString(5, staff.getPasswd());
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }//To change body of generated methods, choose Tools | Templates.
@@ -165,7 +165,7 @@ public class StaffEjbBean extends BaseJdbcService{
           pstm=conn.prepareStatement("DELETE FROM teacher WHERE TID="+staffId);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -182,7 +182,7 @@ public class StaffEjbBean extends BaseJdbcService{
           pstm.setString(3, semester);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -199,7 +199,7 @@ public class StaffEjbBean extends BaseJdbcService{
           pstm.setString(3, semester);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -225,7 +225,7 @@ public class StaffEjbBean extends BaseJdbcService{
         	  courseId=rs.getByte("CID");
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -242,7 +242,7 @@ public class StaffEjbBean extends BaseJdbcService{
           pstm=conn.prepareStatement("DELETE FROM COURSE_CONDUCTION WHERE CCID="+ccid);
           pstm.execute();
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(null, pstm, conn);
         }
@@ -269,7 +269,7 @@ public class StaffEjbBean extends BaseJdbcService{
         	  staffCourseList.add(courseConduction);
           }
         }catch(Exception e){
-            Logger.getLogger(BaseJdbcService.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally{
              sqlCleanup(rs, pstm, conn);
         }

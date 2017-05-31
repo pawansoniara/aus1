@@ -18,18 +18,19 @@ public class AuthenticationEjbBean extends BaseJdbcService{
         PreparedStatement pstm=null;
         try{
           conn=getDbConnection();
-          pstm=conn.prepareStatement("SELECT FNAME, ACCESS_ID  FROM teacher WHERE email=? AND PASSWD=?");
+          pstm=conn.prepareStatement("SELECT TID,FNAME, ACCESS_ID  FROM teacher WHERE email=? AND PASSWD=?");
           pstm.setString(1, user.getUserName());
           pstm.setString(2, userPassword);
           rs=pstm.executeQuery();
           if(rs.next()){
               user.setAccessId(rs.getInt("ACCESS_ID"));
               user.setUserName(rs.getString("FNAME"));
+              user.setId(rs.getByte("TID"));
           }else{
               user=null;
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
@@ -43,17 +44,18 @@ public class AuthenticationEjbBean extends BaseJdbcService{
         PreparedStatement pstm=null;
         try{
           conn=getDbConnection();
-          pstm=conn.prepareStatement("SELECT FNAME FROM STUDENT WHERE EMAIL=? AND PASSWD=?");
+          pstm=conn.prepareStatement("SELECT SID,FNAME FROM STUDENT WHERE EMAIL=? AND PASSWD=?");
           pstm.setString(1, user.getUserName());
           pstm.setString(2, userPassword);
           rs=pstm.executeQuery();
           if(rs.next()){
               user.setUserName(rs.getString("FNAME"));
+              user.setId(rs.getByte("SID"));
           }else{
               user=null;
           }
         }catch(Exception e){
-            System.err.println(BaseJdbcService.class.getName()+"    :   "+ e.getMessage());
+            System.err.println(this.getClass().getName()+"    :   "+ e.getMessage());
         }finally{
              sqlCleanup(rs, pstm, conn);
         }
